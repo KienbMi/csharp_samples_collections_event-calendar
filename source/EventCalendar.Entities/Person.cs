@@ -27,15 +27,15 @@ namespace EventCalendar.Entities
 
         public int CompareTo(Person other)
         {
-            int result = LastName.CompareTo(other.LastName);
+            int result = -(NumberOfEvents.CompareTo(other.NumberOfEvents));
 
             if (result == 0)
             {
-                result = FirstName.CompareTo(other.FirstName);
+                result = LastName.CompareTo(other.LastName);
 
                 if (result == 0)
                 {
-                    result = NumberOfEvents.CompareTo(other.NumberOfEvents);
+                    result = FirstName.CompareTo(other.FirstName);
                 }
             }
 
