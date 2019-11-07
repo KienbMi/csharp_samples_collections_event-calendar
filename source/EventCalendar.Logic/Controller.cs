@@ -10,7 +10,7 @@ namespace EventCalendar.Logic
     public class Controller
     {
         private readonly ICollection<Event> _events;
-        public int EventsCount { get { throw new NotImplementedException();} }
+        public int EventsCount { get { return _events.Count;} }
 
         public Controller()
         {
@@ -31,7 +31,45 @@ namespace EventCalendar.Logic
         /// <returns>Wurde die Veranstaltung angelegt</returns>
         public bool CreateEvent(Person invitor, string title, DateTime dateTime, int maxParticipators = 0)
         {
-            throw new NotImplementedException();
+            bool valid = true;
+
+            if (invitor == null)
+                valid = false;
+
+            if (string.IsNullOrEmpty(title))
+                valid = false;
+
+            foreach (var events_ in _events)
+            {
+                if(events_.Title.CompareTo(title) == 0)
+                {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (dateTime == null)
+                throw new ArgumentNullException(nameof(dateTime));
+
+            if (dateTime < DateTime.Now)
+                valid = false;
+
+            if (valid)
+            {
+                if (maxParticipators == 0)
+                {
+                    Event newEvent = new Event(invitor, title, dateTime);
+
+                    _events.Add(newEvent);
+                }
+                else
+                {
+                    Event newEvent = new EventWithParticipatorLimit(invitor, title, dateTime, maxParticipators);
+
+                    _events.Add(newEvent);
+                }
+            }
+            return valid;
         }
 
 
@@ -42,7 +80,19 @@ namespace EventCalendar.Logic
         /// <returns>Event oder null, falls es keine Veranstaltung mit dem Titel gibt</returns>
         public Event GetEvent(string title)
         {
-            throw new NotImplementedException();
+            Event result = null;
+
+            foreach (var event_ in _events)
+            {
+                //if (event_.Title.CompareTo(title, StringComparison.CurrentCultureIgnoreCase) == 0)
+                if(event_.Title.CompareTo(title) == 0)
+                {
+                    result = event_;
+                    break;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -54,7 +104,20 @@ namespace EventCalendar.Logic
         /// <returns>War die Registrierung erfolgreich?</returns>
         public bool RegisterPersonForEvent(Person person, Event ev)
         {
-            throw new NotImplementedException();
+            bool valid = false;
+
+            if (person != null && ev != null)
+            {
+                Event event_ = GetEvent(ev.Title);
+
+                if (event_ != null)
+                {
+                    valid = event_.AddPerson(person);
+                    valid = true;
+                }
+            }
+
+            return valid;
         }
 
         /// <summary>
@@ -65,7 +128,19 @@ namespace EventCalendar.Logic
         /// <returns>War die Abmeldung erfolgreich?</returns>
         public bool UnregisterPersonForEvent(Person person, Event ev)
         {
-            throw new NotImplementedException();
+            bool valid = false;
+
+            if (person != null && ev != null)
+            {
+                Event event_ = GetEvent(ev.Title);
+
+                if (event_ != null)
+                {
+                    valid = event_.RemovePerson(person);
+                }
+            }
+
+            return valid;
         }
 
         /// <summary>
@@ -77,7 +152,20 @@ namespace EventCalendar.Logic
         /// <returns>Liste der Teilnehmer oder null im Fehlerfall</returns>
         public IList<Person> GetParticipatorsForEvent(Event ev)
         {
-            throw new NotImplementedException();
+            List<Person> persons = null;
+
+            if (ev != null)
+            {
+                Event event_ = GetEvent(ev.Title);
+
+                if (event_ != null)
+                {
+                    persons = event_.GetParticipator();
+                    persons.Sort();
+                }
+            }
+
+            return persons;
         }
 
         /// <summary>
@@ -87,7 +175,23 @@ namespace EventCalendar.Logic
         /// <returns>Liste der Veranstaltungen oder null im Fehlerfall</returns>
         public List<Event> GetEventsForPerson(Person person)
         {
-            throw new NotImplementedException();
+            List<Event> events = null;
+
+            if (person != null)
+            {
+                events = new List<Event>();
+
+                foreach (var event_ in _events)
+                {
+                    if (event_.ContainsPerson(person))
+                    {
+                        events.Add(event_);
+                    }
+                }
+
+            }
+
+            return events;
         }
 
         /// <summary>
@@ -97,8 +201,17 @@ namespace EventCalendar.Logic
         /// <returns>Anzahl oder 0 im Fehlerfall</returns>
         public int CountEventsForPerson(Person participator)
         {
-            throw new NotImplementedException();
-        }
+            int count = 0;
 
+            foreach (var event_ in _events)
+            {
+                if (event_.ContainsPerson(participator))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
     }
 }

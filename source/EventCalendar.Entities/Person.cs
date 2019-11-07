@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,7 +10,7 @@ namespace EventCalendar.Entities
     /// Person kann sowohl zu einer Veranstaltung einladen,
     /// als auch an Veranstaltungen teilnehmen
     /// </summary>
-    public class Person
+    public class Person : IComparable<Person>
     {
         public string LastName { get; }
         public string FirstName { get; }
@@ -21,6 +22,11 @@ namespace EventCalendar.Entities
         {
             LastName = lastName;
             FirstName = firstName;
+        }
+
+        public int CompareTo(Person other)
+        {
+            return LastName.CompareTo(other.LastName);
         }
     }
 }
