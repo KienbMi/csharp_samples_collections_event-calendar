@@ -16,6 +16,7 @@ namespace EventCalendar.Entities
         public string FirstName { get; }
         public string MailAddress { get; set; }
         public string PhoneNumber { get; set; }
+        public int NumberOfEvents { get; set; }
 
 
         public Person(string lastName, string firstName)
@@ -26,7 +27,19 @@ namespace EventCalendar.Entities
 
         public int CompareTo(Person other)
         {
-            return LastName.CompareTo(other.LastName);
+            int result = LastName.CompareTo(other.LastName);
+
+            if (result == 0)
+            {
+                result = FirstName.CompareTo(other.FirstName);
+
+                if (result == 0)
+                {
+                    result = NumberOfEvents.CompareTo(other.NumberOfEvents);
+                }
+            }
+
+            return result;
         }
     }
 }

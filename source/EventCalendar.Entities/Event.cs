@@ -8,7 +8,7 @@ namespace EventCalendar.Entities
         private Person _invitor;
         private string _title;
         private DateTime _dateTime;
-        private List<Person> _persons;
+        internal List<Person> _persons;
 
         public Event(Person invitor, string title, DateTime dateTime)
         {
@@ -22,13 +22,14 @@ namespace EventCalendar.Entities
             get { return _title; }
         }
 
-        public bool AddPerson(Person person)
+        public virtual bool AddPerson(Person person)
         {
             bool valid = false;
 
             if (_persons.Contains(person) == false)
             {
                 _persons.Add(person);
+                person.NumberOfEvents++;
                 valid = true;
             }
 
@@ -42,6 +43,7 @@ namespace EventCalendar.Entities
             if (_persons.Contains(person))
             {
                 _persons.Remove(person);
+                person.NumberOfEvents--;
                 valid = true;
             }
 

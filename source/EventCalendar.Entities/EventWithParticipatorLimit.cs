@@ -12,5 +12,10 @@ namespace EventCalendar.Entities
         {
             _maxParticipators = maxParticipators;
         }
+
+        public override bool AddPerson(Person person)
+        {
+            return (_maxParticipators > _persons.Count) ? base.AddPerson(person) : false;
+        }
     }
 }

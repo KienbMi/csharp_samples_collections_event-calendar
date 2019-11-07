@@ -113,7 +113,6 @@ namespace EventCalendar.Logic
                 if (event_ != null)
                 {
                     valid = event_.AddPerson(person);
-                    valid = true;
                 }
             }
 
